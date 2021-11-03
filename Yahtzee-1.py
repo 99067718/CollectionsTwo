@@ -8,7 +8,7 @@ dobbel4 = 0
 dobbel5 = 0
 
 #--Gebruikte punten--#
-existingItems = ["Enen", "Tweën", "Drieën", "Vieren", "vijven", "Zessen", "ThreeOfAKind", "FourOfAKind","FullHouse","SmallStraight","LargeStraight","Chance","Yahtzee"]
+existingItems = ["Enen", "Tweën", "Drieën", "Vieren", "Vijven", "Zessen", "ThreeOfAKind", "FourOfAKind","FullHouse","SmallStraight","LargeStraight","Chance","Yahtzee"]
 unusedScore = existingItems
 
 #--Bewaar dobbelstenen--#
@@ -20,32 +20,32 @@ keep5 = "N"
 
 #--Punten Lijst 1--#
 topListScore = {
-    "Enen": int,
-    "Tweën": int,
-    "Drieën": int,
-    "Vieren": int,
-    "Vijven": int,
-    "Zessen": int
+    "Enen": 0,
+    "Tweën": 0,
+    "Drieën": 0,
+    "Vieren": 0,
+    "Vijven": 0,
+    "Zessen": 0
 }
-topListTotal = int
+topListTotal = 0
 
 #Punten bovenste lijst#
-Total1 = int
-bonus = int
+Total1 = 0
+bonus = 0
 
 #--Punten Lijst 2--#
 bottomListScore = {
-    "ThreeOfAKind": int,
-    "FourOfAKind": int,
-    "FullHouse": int,
-    "SmallStraight": int,
-    "LargeStraight": int,
-    "Chance": int,
-    "Yahtzee": int
+    "ThreeOfAKind": 0,
+    "FourOfAKind": 0,
+    "FullHouse": 0,
+    "SmallStraight": 0,
+    "LargeStraight": 0,
+    "Chance": 0,
+    "Yahtzee": 0
 }
 
 #--EindScore--#
-Totaal = int
+Totaal = 0
 
 def KeepItems():
     global keep1
@@ -107,6 +107,8 @@ def BerekenEnen():
         Proceed = input("Weet U zeker dat U deze wil gebruiken voor " + str(score) + " punten?(Y/N): ").upper()
         if Proceed == "Y":
 
+            global topListTotal
+            topListTotal += score
             topListScore["Enen"] += score
         else:
             print("Welke wil je gebruiken?")
@@ -130,6 +132,9 @@ def BerekenTweën():
             score += 2
         Proceed = input("Weet U zeker dat U deze wil gebruiken voor " + str(score) + " punten?(Y/N): ").upper()
         if Proceed == "Y":
+
+            global topListTotal
+            topListTotal += score
             topListScore["Tweën"] += score
         else:
             print("Welke wil je gebruiken?")
@@ -141,19 +146,74 @@ def BerekenDrieën():
         WelkePunten()
     else:
         score = 0
-        if dobbel1 == 2:
-            score += 2
-        if dobbel2 == 2:
-            score += 2
-        if dobbel3 == 2:
-            score += 2
-        if dobbel4 == 2:
-            score += 2
-        if dobbel5 == 2:
-            score += 2
+        if dobbel1 == 3:
+            score += 3
+        if dobbel2 == 3:
+            score += 3
+        if dobbel3 == 3:
+            score += 3
+        if dobbel4 == 3:
+            score += 3
+        if dobbel5 == 3:
+            score += 3
         Proceed = input("Weet U zeker dat U deze wil gebruiken voor " + str(score) + " punten?(Y/N): ").upper()
         if Proceed == "Y":
+
+            global topListTotal
+            topListTotal += score
             topListScore["Drieën"] += score
+        else:
+            print("Welke wil je gebruiken?")
+            WelkePunten()
+
+def BerekenVieren():
+    if topListScore["Vieren"] > 0:
+        print("U heeft deze al gebruikt, Kies een andere.")
+        WelkePunten()
+    else:
+        score = 0
+        if dobbel1 == 4:
+            score += 4
+        if dobbel2 == 4:
+            score += 4
+        if dobbel3 == 4:
+            score += 4
+        if dobbel4 == 4:
+            score += 4
+        if dobbel5 == 4:
+            score += 4
+        Proceed = input("Weet U zeker dat U deze wil gebruiken voor " + str(score) + " punten?(Y/N): ").upper()
+        if Proceed == "Y":
+
+            global topListTotal
+            topListTotal += score
+            topListScore["Vieren"] += score
+        else:
+            print("Welke wil je gebruiken?")
+            WelkePunten()
+
+def BerekenVijven():
+    if topListScore["Vijven"] > 0:
+        print("U heeft deze al gebruikt, Kies een andere.")
+        WelkePunten()
+    else:
+        score = 0
+        if dobbel1 == 5:
+            score += 5
+        if dobbel2 == 5:
+            score += 5
+        if dobbel3 == 5:
+            score += 5
+        if dobbel4 == 5:
+            score += 5
+        if dobbel5 == 5:
+            score += 5
+        Proceed = input("Weet U zeker dat U deze wil gebruiken voor " + str(score) + " punten?(Y/N): ").upper()
+        if Proceed == "Y":
+
+            global topListTotal
+            topListTotal += score
+            topListScore["Vijven"] += score
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
@@ -161,8 +221,34 @@ def BerekenDrieën():
 def WelkePunten():
     print("Waar wil je je punten voor gebruiken?")
     print(unusedScore)
-    print("Enen(1)", "Tweën(2)", "Drieën(3)", "Vieren(4)", "vijven(5)", "Zessen(6)", "ThreeOfAKind(7)", "FourOfAKind(8)","FullHouse(9)","SmallStraight(10)","LargeStraight(11)")
-    Gebruik = input("Typ hier: ")
+    localLoop = "Yes"
+    while localLoop == "Yes":
+        print("Enen(1)", "Tweën(2)", "Drieën(3)", "Vieren(4)", "vijven(5)", "Zessen(6)", "ThreeOfAKind(7)", "FourOfAKind(8)","FullHouse(9)","SmallStraight(10)","LargeStraight(11)","Chance(13)","Yahtzee(14)")
+        try:
+            Gebruik = int(input("Typ hier: "))
+            break
+        except ValueError:
+            print("Vul een nummer in")
+    if Gebruik == 1 and "Enen" in unusedScore:
+        unusedScore.remove("Enen")
+        BerekenEnen()
+    elif Gebruik == 2 and "Tweën" in unusedScore:
+        unusedScore.remove("Tweën")
+        BerekenTweën()
+    elif Gebruik == 3 and "Drieën" in unusedScore:
+        unusedScore.remove("Drieën")
+        BerekenDrieën()
+    elif Gebruik == 4 and "Vieren" in unusedScore:
+        unusedScore.remove("Vieren")
+        BerekenVieren()
+    elif Gebruik == 5 and "Vijven" in unusedScore:
+        unusedScore.remove("Zessen")
+        BerekenVijven()
+    
+    else:
+        print("Kies een andere.")
+        WelkePunten()
+
 
 
 while ronde <= 13:
@@ -172,7 +258,9 @@ while ronde <= 13:
     keep4 = "N"
     keep5 = "N"
 
+
     ronde += 1
     for i in range(3):
         dobbelStenenGooien()
     WelkePunten()
+    print(topListScore)
