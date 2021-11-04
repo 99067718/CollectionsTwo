@@ -218,6 +218,72 @@ def BerekenVijven():
             print("Welke wil je gebruiken?")
             WelkePunten()
 
+def BerekenZessen():
+    if topListScore["Zessen"] > 0:
+        print("U heeft deze al gebruikt, Kies een andere.")
+        WelkePunten()
+    else:
+        score = 0
+        if dobbel1 == 6:
+            score += 6
+        if dobbel2 == 6:
+            score += 6
+        if dobbel3 == 6:
+            score += 6
+        if dobbel4 == 6:
+            score += 6
+        if dobbel5 == 6:
+            score += 6
+        Proceed = input("Weet U zeker dat U deze wil gebruiken voor " + str(score) + " punten?(Y/N): ").upper()
+        if Proceed == "Y":
+
+            global topListTotal
+            topListTotal += score
+            topListScore["Zessen"] += score
+        else:
+            print("Welke wil je gebruiken?")
+            WelkePunten()
+
+def ThreeOfAKind():
+    VerdientPunten = True
+    check1 = dobbel1
+    check2 = "None"
+    if dobbel2 == dobbel1:
+        amount1 = 2
+    else:
+        check2 = dobbel2
+        amount2 = 1
+
+    if dobbel3 == check1:
+        amount1 += 1
+    elif dobbel3 == check2:
+        amount2 += 1
+    else:
+        if check2 == "None":
+            check2 = dobbel3
+        else:
+            VerdientPunten = False
+
+    if dobbel5 == check1:
+        amount1 += 1
+    elif dobbel3 == check2:
+        amount2 += 1
+    else:
+        if check2 == "None":
+            check2 = dobbel5
+        else:
+            VerdientPunten = False
+    
+        if dobbel4 == check1:
+            amount1 += 1
+        elif dobbel3 == check2:
+            amount2 += 1
+        else:
+            if check2 == "None":
+                check2 = dobbel4
+            else:
+                VerdientPunten = False
+
 def WelkePunten():
     print("Waar wil je je punten voor gebruiken?")
     print(unusedScore)
@@ -242,6 +308,9 @@ def WelkePunten():
         unusedScore.remove("Vieren")
         BerekenVieren()
     elif Gebruik == 5 and "Vijven" in unusedScore:
+        unusedScore.remove("Vijven")
+        BerekenVijven()
+    elif Gebruik == 6 and "Zessen" in unusedScore:
         unusedScore.remove("Zessen")
         BerekenVijven()
     
