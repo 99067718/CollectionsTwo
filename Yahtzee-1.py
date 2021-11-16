@@ -1,9 +1,13 @@
+from decimal import InvalidOperation
 from os import truncate
 import random
+import time
+from subprocess import check_call
 ronde = 1
 #Used Later#
 amount1 = 0
 amount2 = 0
+aantalYahtzees = 0
 
 #--Dobbelstenen--#
 dobbel1 = 0
@@ -95,6 +99,25 @@ def dobbelStenenGooien():
     print("Dobbelsteen 5: " + str(dobbel5))
 
     KeepItems()
+
+def Yahtzee():
+    global bottomListTotal
+    global aantalYahtzees
+
+    CheckList = [dobbel1,dobbel2,dobbel3,dobbel4,dobbel5]
+    x = CheckList.count(dobbel1)
+    if x == 5 and aantalYahtzees == 0:
+        bottomListTotal += 50
+        bottomListScore["Yahtzee"] += 50
+        unusedScore.remove("Yahtzee")
+    elif x != 5:
+        weetJeZeker(0)
+        proceed = input("Y/N: ").upper()
+        if proceed == "Y":
+            print("U heeft zojuist uw kans op Yahtzee verspilt...")
+        else:
+            WelkePunten()
+    
 
 def BerekenEnen():
     if topListScore["Enen"] > 0:
@@ -432,14 +455,59 @@ def smallStraight():
         else:
             WelkePunten()
         ###print("Weet je zeker dat je deze wil gebruiken voor 0 punten?")
+
+def LargeStraight():
+    global bottomListTotal
+    getScore = False
+    CheckList = [dobbel1,dobbel2,dobbel3,dobbel4,dobbel5]
+    if 1 in CheckList and 2 in CheckList and 3 in CheckList and 4 in CheckList and 5 in CheckList:
+        getScore = True
+    elif 2 in CheckList and 3 in CheckList and 4 in CheckList and 5 in CheckList and 6 in CheckList:
+        getScore = True
+    if getScore == True:
+        ###print("Weet je zeker dat je deze wil gebruiken voor 30 punten?")
+        weetJeZeker(40)
+        proceed = input("Y/N: ").upper()
+        if proceed == "Y":
+            bottomListTotal += 40
+            bottomListScore["LargeStraight"] += 40
+            unusedScore.remove("LargeStraight")
+        else:
+            WelkePunten()
+    else:
+        weetJeZeker(0)
+        proceed = input("Y/N: ").upper()
+        if proceed == "Y":
+            bottomListTotal += 0
+            bottomListScore["LargeStraight"] += 0
+            unusedScore.remove("LargeStraight")
+        else:
+            WelkePunten()
+        ###print("Weet je zeker dat je deze wil gebruiken voor 0 punten?")
     
+
+def chance():
+    global bottomListTotal
+    total = dobbel1 + dobbel2 + dobbel3 + dobbel4 + dobbel5
+    weetJeZeker(total)
+    proceed = input("Y/N: ").upper()
+    if proceed == "Y":
+        bottomListTotal += total
+        unusedScore.remove("Chance")
+        bottomListScore["Chance"] += total
+    else:
+        WelkePunten()
+
+
+
+
 
 def WelkePunten():
     print("Waar wil je je punten voor gebruiken?")
     print(unusedScore)
     localLoop = "Yes"
     while localLoop == "Yes":
-        print("Enen(1)", "Tweën(2)", "Drieën(3)", "Vieren(4)", "vijven(5)", "Zessen(6)", "ThreeOfAKind(7)", "FourOfAKind(8)","FullHouse(9)","SmallStraight(10)","LargeStraight(11)","Chance(13)","Yahtzee(14)")
+        print("Enen(1)", "Tweën(2)", "Drieën(3)", "Vieren(4)", "vijven(5)", "Zessen(6)", "ThreeOfAKind(7)", "FourOfAKind(8)","FullHouse(9)","SmallStraight(10)","LargeStraight(11)","Chance(12)","Yahtzee(13)")
         try:
             Gebruik = int(input("Typ hier: "))
             break
@@ -470,6 +538,12 @@ def WelkePunten():
         FullHouse()
     elif Gebruik == 10 and "SmallStraight" in unusedScore:
         smallStraight()
+    elif Gebruik == 11 and "LargeStraight" in unusedScore:
+        LargeStraight()
+    elif Gebruik == 12 and "Chance" in unusedScore:
+        chance()
+    elif Gebruik == 13 and "Yahtzee" in unusedScore:
+        Yahtzee()
     
     else:
         print("Kies een andere.")
@@ -491,3 +565,11 @@ while ronde <= 13:
     WelkePunten()
     print(topListScore)
     print(bottomListScore)
+
+print("Ronde is voorbij, we zijn druk bezig met het berekenen van uw score...")
+time.sleep(3)
+if bottomListTotal >= 60:
+    bonus = 35
+
+FinalScore = bottomListTotal + bonus + topListTotal
+print("Uw eindscore is:",FinalScore)
