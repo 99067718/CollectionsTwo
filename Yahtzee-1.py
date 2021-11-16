@@ -1,5 +1,10 @@
+from os import truncate
 import random
 ronde = 1
+#Used Later#
+amount1 = 0
+amount2 = 0
+
 #--Dobbelstenen--#
 dobbel1 = 0
 dobbel2 = 0
@@ -43,9 +48,12 @@ bottomListScore = {
     "Chance": 0,
     "Yahtzee": 0
 }
-
+bottomListTotal = 0
 #--EindScore--#
 Totaal = 0
+
+def weetJeZeker(E = 0):
+    print("Weet je zeker dat je deze wil gebruiken voor",E,"Punten?")
 
 def KeepItems():
     global keep1
@@ -110,6 +118,7 @@ def BerekenEnen():
             global topListTotal
             topListTotal += score
             topListScore["Enen"] += score
+            unusedScore.remove("Enen")
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
@@ -136,6 +145,7 @@ def BerekenTweën():
             global topListTotal
             topListTotal += score
             topListScore["Tweën"] += score
+            unusedScore.remove("Tweën")
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
@@ -162,6 +172,7 @@ def BerekenDrieën():
             global topListTotal
             topListTotal += score
             topListScore["Drieën"] += score
+            unusedScore.remove("Drieën")
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
@@ -188,6 +199,7 @@ def BerekenVieren():
             global topListTotal
             topListTotal += score
             topListScore["Vieren"] += score
+            unusedScore.remove("Vieren")
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
@@ -214,6 +226,7 @@ def BerekenVijven():
             global topListTotal
             topListTotal += score
             topListScore["Vijven"] += score
+            unusedScore.remove("Vijven")
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
@@ -240,49 +253,186 @@ def BerekenZessen():
             global topListTotal
             topListTotal += score
             topListScore["Zessen"] += score
+            unusedScore.remove("Zessen")
         else:
             print("Welke wil je gebruiken?")
             WelkePunten()
 
 def ThreeOfAKind():
-    VerdientPunten = True
+    score = 0
+    CheckList = [dobbel1, dobbel2, dobbel3, dobbel4, dobbel5]
+    ones = CheckList.count(1)
+    twos = CheckList.count(2)
+    threes = CheckList.count(3)
+    fours = CheckList.count(4)
+    fives = CheckList.count(5)
+    sixes = CheckList.count(6)
+    
+    if ones >= 3:
+        score += ones
+    elif twos >= 3:
+        twos = twos * 2
+        score += twos
+    elif threes >= 3:
+        threes = threes * 3
+        score += threes
+    elif fours >= 3:
+        fours = fours * 4
+        score += fours
+    elif fives >= 3:
+        fives = fives * 5
+        score += fives
+    elif sixes >= 3:
+        sixes = sixes * 6
+        score += sixes
+    
+    global bottomListTotal
+    ###print("Weet je zeker dat je deze wil gebruiken voor",score,"Punten?")
+    weetJeZeker(score)
+    proceed = input("Y/N: ").upper()
+    if proceed == "Y":
+        unusedScore.remove("ThreeOfAKind")
+        bottomListTotal += score
+        bottomListScore["ThreeOfAKind"] += score
+
+def FourOfAKind():
+    score = 0
+    CheckList = [dobbel1, dobbel2, dobbel3, dobbel4, dobbel5]
+    ones = CheckList.count(1)
+    twos = CheckList.count(2)
+    threes = CheckList.count(3)
+    fours = CheckList.count(4)
+    fives = CheckList.count(5)
+    sixes = CheckList.count(6)
+    
+    if ones >= 4:
+        score += ones
+    elif twos >= 4:
+        twos = twos * 2
+        score += twos
+    elif threes >= 4:
+        threes = threes * 3
+        score += threes
+    elif fours >= 4:
+        fours = fours * 4
+        score += fours
+    elif fives >= 4:
+        fives = fives * 5
+        score += fives
+    elif sixes >= 4:
+        sixes = sixes * 6
+        score += sixes
+    
+    global bottomListTotal
+    ###print("Weet je zeker dat je deze wil gebruiken voor",score,"Punten?")
+    weetJeZeker(score)
+    proceed = input("Y/N: ").upper()
+    if proceed == "Y":
+        unusedScore.remove("FourOfAKind")
+        bottomListTotal += score
+        bottomListScore["FourOfAKind"] += score
+    else:
+        WelkePunten()
+
+def FullHouse():
+    global amount1
+    global amount2
+    amount1 = 1
+    amount2 = 0
     check1 = dobbel1
     check2 = "None"
-    if dobbel2 == dobbel1:
-        amount1 = 2
+    if dobbel2 == check1:
+        amount1 += 1
     else:
-        check2 = dobbel2
         amount2 = 1
+        check2 = dobbel2
 
     if dobbel3 == check1:
         amount1 += 1
     elif dobbel3 == check2:
         amount2 += 1
     else:
-        if check2 == "None":
-            check2 = dobbel3
-        else:
-            VerdientPunten = False
+        check2 = dobbel3
+        amount2 = 1
+    
+    if dobbel4 == check1:
+        amount1 += 1
+    elif dobbel4 == check2:
+        amount2 += 1
+    else:
+        check2 = dobbel4
+        amount2 = 1
 
     if dobbel5 == check1:
         amount1 += 1
-    elif dobbel3 == check2:
+    elif dobbel5 == check2:
         amount2 += 1
     else:
-        if check2 == "None":
-            check2 = dobbel5
+        check2 = dobbel5
+        amount2 = 1
+
+
+    ##Checking score##
+    global bottomListTotal
+    if amount1 == 2 and amount2 == 3:
+        ##print("Weet je zeker dat je dit wil gebruiken voor 25 punten?")
+        weetJeZeker(25)
+        antw = input("Y/N: ").upper()
+        if antw == "Y":
+            unusedScore.remove("FullHouse")
+            bottomListTotal += 25
+            bottomListScore["FullHouse"] += 25
+            #x = unusedScore.count("kaas")
+        else: 
+            WelkePunten()
+    elif amount2 == 2 and amount1 == 3:
+        ##print("Weet je zeker dat je dit wil gebruiken voor 25 punten?")
+        weetJeZeker(25)
+        antw = input("Y/N: ").upper()
+        if antw == "Y":
+            unusedScore.remove("FullHouse")
+            bottomListTotal += 25
+            bottomListScore["FullHouse"] += 25
         else:
-            VerdientPunten = False
+            WelkePunten()
+    else:
+        weetJeZeker(0)
+        ###print("Weet je zeker dat je dit wil gebruiken voor 0 punten?")
+        antw = input("Y/N: ").upper()
+        if antw == "Y":
+            unusedScore.remove("FullHouse")
+
+def smallStraight():
+    global bottomListTotal
+    getScore = False
+    CheckList = [dobbel1,dobbel2,dobbel3,dobbel4,dobbel5]
+    if 1 in CheckList and 2 in CheckList and 3 in CheckList and 4 in CheckList:
+        getScore = True
+    elif 2 in CheckList and 3 in CheckList and 4 in CheckList and 5 in CheckList:
+        getScore = True
+    elif 3 in CheckList and 4 in CheckList and 5 in CheckList and 6 in CheckList:
+        getScore = True
+    if getScore == True:
+        ###print("Weet je zeker dat je deze wil gebruiken voor 30 punten?")
+        weetJeZeker(30)
+        proceed = input("Y/N: ").upper()
+        if proceed == "Y":
+            bottomListTotal += 30
+            bottomListScore["SmallStraight"] += 30
+            unusedScore.remove("SmallStraight")
+        else:
+            WelkePunten()
+    else:
+        weetJeZeker(0)
+        proceed = input("Y/N: ").upper()
+        if proceed == "Y":
+            bottomListTotal += 0
+            bottomListScore["SmallStraight"] += 0
+            unusedScore.remove("SmallStraight")
+        else:
+            WelkePunten()
+        ###print("Weet je zeker dat je deze wil gebruiken voor 0 punten?")
     
-        if dobbel4 == check1:
-            amount1 += 1
-        elif dobbel3 == check2:
-            amount2 += 1
-        else:
-            if check2 == "None":
-                check2 = dobbel4
-            else:
-                VerdientPunten = False
 
 def WelkePunten():
     print("Waar wil je je punten voor gebruiken?")
@@ -296,23 +446,30 @@ def WelkePunten():
         except ValueError:
             print("Vul een nummer in")
     if Gebruik == 1 and "Enen" in unusedScore:
-        unusedScore.remove("Enen")
+        
         BerekenEnen()
     elif Gebruik == 2 and "Tweën" in unusedScore:
-        unusedScore.remove("Tweën")
+        
         BerekenTweën()
     elif Gebruik == 3 and "Drieën" in unusedScore:
-        unusedScore.remove("Drieën")
+        
         BerekenDrieën()
     elif Gebruik == 4 and "Vieren" in unusedScore:
-        unusedScore.remove("Vieren")
+        
         BerekenVieren()
     elif Gebruik == 5 and "Vijven" in unusedScore:
-        unusedScore.remove("Vijven")
+        
         BerekenVijven()
     elif Gebruik == 6 and "Zessen" in unusedScore:
-        unusedScore.remove("Zessen")
-        BerekenVijven()
+        BerekenZessen()
+    elif Gebruik == 7 and "ThreeOfAKind" in unusedScore:
+        ThreeOfAKind()
+    elif Gebruik == 8 and "FourOfAKind" in unusedScore:
+        FourOfAKind()
+    elif Gebruik == 9 and "FullHouse" in unusedScore:
+        FullHouse()
+    elif Gebruik == 10 and "SmallStraight" in unusedScore:
+        smallStraight()
     
     else:
         print("Kies een andere.")
@@ -333,3 +490,4 @@ while ronde <= 13:
         dobbelStenenGooien()
     WelkePunten()
     print(topListScore)
+    print(bottomListScore)
