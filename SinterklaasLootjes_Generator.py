@@ -39,12 +39,13 @@ def Namen():
 
 def randomLootje():
     print("Lootjes zijn aan het verdelen...")
-    numbersBetween = random.randint(1,aantal)
-    for i in range(aantal):
-        nummerdingetje = numbersBetween + -i
-        Getrokken = namenLijst[nummerdingetje]
-        Persoon = namenLijst[i]
-        getrokkenLootje[Persoon] = Getrokken
+    for i in range(0,aantal):
+        chosen = random.choice(ongebruikteNamen)
+        persoon = namenLijst[i]
+        ongebruikteNamen.remove(chosen)
+        getrokkenLootje[persoon] = chosen
+
+
 
 Namen()
 
@@ -62,7 +63,21 @@ while True:
     else:
         print("Sorry dat begreep ik niet.")
 
+ongebruikteNamen = list(namenLijst)
 randomLootje()
+number = 0
+i = 0
+while True:
+    persoon = list(getrokkenLootje.values()) [i]
+    key = getrokkenLootje[persoon]
+    i += 1
+    if key == persoon:
+        ongebruikteNamen = list(namenLijst)
+        randomLootje()
+        i = 0
+    elif i == aantal:
+        break
+
 print(getrokkenLootje)
 
 
