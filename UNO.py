@@ -22,6 +22,14 @@ clearConsole()
 
 namenLijst = ["Jan-Peter","Lonald_Frump","Bustin_Jieber","Muper_Sario","GoldPilot2035","SuperAwesomeUsername","Rark-Mutte","Weerd_Gilders","Bhierry-Taudet","Bilfred Wouman","GateKeeper","DuckFuckMaster", "Karel", "Tante_Hendy", "Bertha", "Kees", "Henk", "Kim_jong-un", "Donald_Trump", "Obama", "Opa_Koos", "Ome_Gerda", "Jaap_klaas", "Zwarte_Piet", "xXCoolBoi69Xx", "Emiel", "Wilfred","Panneke_Veters", "Sinterklaas", "Jevil", "Sans", "Papyrus", "Peppa-Pig", "Piet-Jan","Duck", "PP_Master420","NoLife","UNO_reverse","Haha_UnoGoBrr","OriginalUsername","Username", "MinecraftPro", "KlokkenMeester","MarkRobbertYT","Mark_Zuckerberg","Pringles","PoopSwagMan", "PoopMasterLuke", "IAmSoSuperCool", "AnimeBoi", "MemeMan_Swag", "LuckyMan","Steve", "RobloxMan", "\_(•◡•)_/", "Luigi", "Waluigi", "Wario", "WAH"]
 
+#Winnaars
+first = "empty"
+second = "empty"
+third = "empty"
+
+#BoolValues
+placedInleaderboard = False
+
 #Speler kaarten#
 MainPlayerDeck = []
 player2Deck = []
@@ -412,12 +420,7 @@ input("Druk op Enter om de kaarten te verdelen.")
 def jeDeck():
     print("Jouw kaarten:",MainPlayerDeck)
 
-def YouWin():
-    time.sleep(1)
-    clearConsole()
-    while True:
-        print("""
-        """)
+
 
 for i in range(aantal):
         if i == 0:
@@ -469,26 +472,40 @@ def PrintDecks():
             print([player10Naam],":",player10Deck)
 
 def JouBeurt():
+    while True:
+        clearConsole()
+        aantalKaarten = len(MainPlayerDeck)
+        for i in range(aantalKaarten):
+            print( str(i + 1), MainPlayerDeck[i])
+        try:
+            gekozenKaart = int(input("Welke kaart wil je gebruiken?: "))
+            if gekozenKaart > aantalKaarten:
+                print("U heeft deze kaart niet...")
+                time.sleep(2)
+            elif gekozenKaart < 1:
+                print("hmm, je probeert het spel voor de gek te houden?")
+                time.sleep(2)
+            else:
+                removeCard = MainPlayerDeck[gekozenKaart-1]
+                aflegstapel.append(removeCard)
+                MainPlayerDeck.pop(gekozenKaart - 1)
+                break
+        except ValueError:
+            print("Vul het nummer die voor de kaart staat in.")
+            time.sleep(2)
+        print(MainPlayerDeck)
+
+
+def AIBeurt(botNaam):
     clearConsole()
-    aantalKaarten = len(MainPlayerDeck)
-    for i in range(aantalKaarten):
-        print( str(i + 1), MainPlayerDeck[i])
-    try:
-        gekozenKaart = int(input("Welke kaart wil je gebruiken?: "))
-        if gekozenKaart > aantalKaarten + 1:
-            print("U heeft deze kaart niet...")
-            time.sleep(2)
-        elif gekozenKaart < 1:
-            print("hmm, je probeert het spel voor de gek te houden?")
-            time.sleep(2)
-        else:
-            removeCard = MainPlayerDeck[gekozenKaart-1]
-            aflegstapel.append(removeCard)
-            MainPlayerDeck.pop(gekozenKaart - 1)
-    except ValueError:
-        print("Vul het nummer die voor de kaart staat in.")
-        time.sleep(2)
-    print(MainPlayerDeck)
+    print(botNaam, "is aan de beurt.")
+    laatsteKaart = aflegstapel[-1]
+    if botNaam == player2Naam:
+
+        player2Deck
+    ThinkingTime = random.randint(0,6)
+    time.sleep(ThinkingTime)
+
 
 Showrules = input("Wil je de spelregels lezen? (Y/N): ").upper()
 if Showrules == "Y":
@@ -522,7 +539,7 @@ if Showrules == "Y":
     De +4 kaart	50
     Na afronding van de puntentelling kan weer een nieuwe spelronde worden gestart.
 
-""")
+    """)
     time.sleep(3)
     input("Druk Op Enter als je klaar bent met het lezen van de spelregels.")
 elif Showrules == "N":
@@ -545,9 +562,47 @@ elif Showrules == "SHREK":
 time.sleep(3)
 while True:
     KaartenOver = len(MainPlayerDeck)
+    if KaartenOver == 0 and placedInleaderboard == False:
+        clearConsole()
+        if third != "empty":
+            print("Helaas sta je niet in de top 3")
+        elif second != "empty":
+            print("Je staat op de 3e plaats")
+            third = Username
+        elif first != "empty":
+            print("Je staat op de 2e plaats.")
+            second = Username
+        elif first == "empty":
+            print("Je staat op de eerste plek!!!!")
+            first = Username
+        placedInleaderboard = True
+        time.sleep(2)
+        print("")
+
     if KaartenOver == 0:
         clearConsole()
-        print("Je hebt gewonnen!!!!")
-        break
+        print("Je hebt geen kaarten meer over, wacht tot de reset klaar is.")
+        time.sleep(1)
     else:
         JouBeurt()
+    for i in range(aantal - 1):
+        if i == 0:
+            AIBeurt(player2Naam)
+        elif i == 1:
+            AIBeurt(player3Naam)
+        elif i == 2:
+            AIBeurt(player4Naam)
+        elif i == 3:
+            AIBeurt(player5Naam)
+        elif i == 4:
+            AIBeurt(player6Naam)
+        elif i == 5:
+            AIBeurt(player7Naam)
+        elif i == 6:
+            AIBeurt(player8Naam)
+        elif i == 7:
+            AIBeurt(player9Naam)
+        elif i == 8:
+            AIBeurt(player10Naam)
+        else:
+            print("Je hebt de game op een of andere manier gesloopt...")
