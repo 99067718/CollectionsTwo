@@ -7,18 +7,20 @@ from time import sleep
 import webbrowser
 import random
 
+seed = random.randint(1,10000000) #zodat je elke keer random hebt tenzij je wilt debuggen
+random.seed(seed)
+
+
 def clearConsole():
     command = 'clear'
     if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
         command = 'cls'
     os.system(command)
+    print(f"seed: {seed}")
 
 clearConsole()
 
 namenLijst = ["Jan-Peter","Lonald_Frump","Bustin_Jieber","Muper_Sario","GoldPilot2035","SuperAwesomeUsername","Rark-Mutte","Weerd_Gilders","Bhierry-Taudet","Bilfred Wouman","GateKeeper","DuckFuckMaster", "Karel", "Tante_Hendy", "Bertha", "Kees", "Henk", "Kim_jong-un", "Donald_Trump", "Obama", "Opa_Koos", "Ome_Gerda", "Jaap_klaas", "Zwarte_Piet", "xXCoolBoi69Xx", "Emiel", "Wilfred","Panneke_Veters", "Sinterklaas", "Jevil", "Sans", "Papyrus", "Peppa-Pig", "Piet-Jan","Duck", "PP_Master420","NoLife","UNO_reverse","Haha_UnoGoBrr","OriginalUsername","Username", "MinecraftPro", "KlokkenMeester","MarkRobbertYT","Mark_Zuckerberg","Pringles","PoopSwagMan", "PoopMasterLuke", "IAmSoSuperCool", "AnimeBoi", "MemeMan_Swag", "LuckyMan","Steve", "RobloxMan", "\_(•◡•)_/", "Luigi", "Waluigi", "Wario", "WAH"]
-
-repeated = 0
-kaart2 = ""
 
 #Speler kaarten#
 MainPlayerDeck = []
@@ -93,6 +95,21 @@ KaartenLijst = {
 "Neem-4": 4
 }
 
+repeated = 0
+####legt de eerste kaart op de aflegstapel
+
+aflegstapel = []
+kaart2 = ""
+kaart = random.choice(list(KaartenLijst))
+
+if kaart == "blauw"or kaart == "rode" or kaart == "groene" or kaart == "gele":
+    nummer = str(random.randint(0,9))
+    kaart2 = kaart + " " +nummer
+else:
+    kaart2 = kaart
+aflegstapel.append(kaart2)
+
+###########################
 def VerdeelKaarten(naam):
     print("Kaarten van", naam,"zijn aan het verdelen...")
     time.sleep(0.7)
@@ -395,6 +412,13 @@ input("Druk op Enter om de kaarten te verdelen.")
 def jeDeck():
     print("Jouw kaarten:",MainPlayerDeck)
 
+def YouWin():
+    time.sleep(1)
+    clearConsole()
+    while True:
+        print("""
+        """)
+
 for i in range(aantal):
         if i == 0:
             VerdeelKaarten(Username)
@@ -445,10 +469,85 @@ def PrintDecks():
             print([player10Naam],":",player10Deck)
 
 def JouBeurt():
-    jeDeck()
-    input("Welke wil je gebruiken?: ")
+    clearConsole()
+    aantalKaarten = len(MainPlayerDeck)
+    for i in range(aantalKaarten):
+        print( str(i + 1), MainPlayerDeck[i])
+    try:
+        gekozenKaart = int(input("Welke kaart wil je gebruiken?: "))
+        if gekozenKaart > aantalKaarten + 1:
+            print("U heeft deze kaart niet...")
+            time.sleep(2)
+        elif gekozenKaart < 1:
+            print("hmm, je probeert het spel voor de gek te houden?")
+            time.sleep(2)
+        else:
+            removeCard = MainPlayerDeck[gekozenKaart-1]
+            aflegstapel.append(removeCard)
+            MainPlayerDeck.pop(gekozenKaart - 1)
+    except ValueError:
+        print("Vul het nummer die voor de kaart staat in.")
+        time.sleep(2)
+    print(MainPlayerDeck)
 
-Showrules = input("Wil je dat ik wat dingetjes uitleg over hoe dit werkt? (Y/N): ").upper()
+Showrules = input("Wil je de spelregels lezen? (Y/N): ").upper()
 if Showrules == "Y":
-    print("Maak functie die regels laat zien!!!")##############################Maak functie die regels laat zien!!!
-jeDeck()
+    clearConsole()
+    print("""Begin van het spel
+    Alle kaarten worden goed geschud en elke speler krijgt 7 kaarten. De overige kaarten vormen samen de trekstapel en worden met de afbeelding naar beneden gelegd. Keer de bovenste kaart van de stapel om. Dit vormt het vertrekpunt voor het spel. 
+
+    Spelverloop
+    De speler links van de deler mag beginnen. Deze speler moet een kaart op de open stapel leggen die qua cijfer, kleur of symbool hetzelfde is als de opgelegde kaart. Vormt geen enkele kaart die de speler in handen heeft een match? Dan pakt hij of zij een kaart van de trekstapel. Wanneer je met deze kaart wél uit de voeten kunt, mag je deze direct spelen, anders is de volgende speler aan de beurt.
+
+    Actiekaarten
+    Het spel UNO bevat naast ‘gewone’ speelkaarten met de cijfers 0 t/m 9 in verschillende kleuren ook speciale actiekaarten. Dit zijn kaarten waarbij een speler een handeling moet verrichten. In totaal zijn er 6 verschillende actiekaarten met elk een aparte functie:
+
+    De +2 kaart Legt jouw voorganger deze ‘’+2 kaart’’ op? Dan moet je 2 kaarten van de stapel pakken. Alsof dit nog niet vervelend genoeg is, moet je ook nog een beurt overslaan! Deze actiekaart mag alleen op een kaart van dezelfde kleur óf een andere ‘’+2 kaart’’ worden gelegd.
+    De keer-om kaart Indien deze kaart wordt opgelegd, verandert de speelrichting direct. Werd er eerst met de klok mee gespeeld? Dan verandert dit naar tegen de klok in. Deze actiekaart mag alleen op een kaart van dezelfde kleur óf een andere ‘’keer-om kaart’’ worden gelegd.
+    De sla-beurt-over kaart Deze kaart wil je het liefst niet tegenkomen vlak voor je eigen beurt. Bij het spelen van deze kaart moet de volgende speler een beurt overslaan. Deze actiekaart mag alleen op een kaart van dezelfde kleur óf een andere ‘’sla-beurt-over kaart’’ worden gelegd.
+    De keuzekaart De keuzekaart heeft eigenlijk dezelfde functie als ‘’De Boer’’ in het spel Pesten. Bij het opleggen van de keuzekaart, roep je de kleur waarin het spel UNO verder gaat. Deze actiekaart mag je te allen tijde spelen. Met de keuzekaart in handen kun je het spel tactisch spelen. Heb je bijvoorbeeld nog veel gele kaarten? Dan is het verstandig om deze kleur te kiezen met de keuzekaart.
+    De +4 kaart Met de ‘’4+ kaart’’ kun je het spel aardig in de war brengen. De speler die deze kaart speelt, bepaalt de kleur waarin verder wordt gespeeld. Tevens verplicht hij/zij de volgende speler om maar liefst 4 kaarten van de stapel te pakken. De pechvogel mag de nieuwe kaarten niet direct spelen en moet op de volgende beurt wachten. Let wel dat de ‘’+4 kaart’’ alleen in geval van ‘nood’ gespeeld mag worden. Dat wil zeggen dat je deze kaart enkel mag spelen indien je geen andere geldige zet kan doen. 
+    Het spel UNO winnen
+    Heb je nog maar één kaart in de hand? Dan is de overwinning dichtbij en moet je ‘’UNO’’ roepen. Net zoals dat je bij het kaartspel Pesten ‘’laatste kaart’’ roept. Indien een speler dit vergeet, moet hij of zij twee kaarten van de stapel trekken. De speler die als eerste al zijn kaarten heeft weggespeeld, wint de spelronde. Nu moeten er punten verdeeld worden. Lees snel verder hoe de puntentelling in zijn werk gaat!
+
+    Puntentelling
+    Het doel van het spel is om als eerste 500 punten te scoren. Deze punten verzamel je door alle kaarten in jouw hand kwijt te raken voordat je tegenspeler(s) dit doen/doet. De punten worden geteld aan de hand van de kaarten die je tegenstanders nog hebben. Aan het einde van elke ronde telt elke speler individueel als volgt hun punten op:
+
+    Soort kaart	Aantal punten
+    Alle cijferkaarten (0-9)	De waarde op de kaart
+    De +2 kaart	20
+    Keer-om	20
+    Sla-beurt-over	20
+    Keuzekaart	50
+    De +4 kaart	50
+    Na afronding van de puntentelling kan weer een nieuwe spelronde worden gestart.
+
+""")
+    time.sleep(3)
+    input("Druk Op Enter als je klaar bent met het lezen van de spelregels.")
+elif Showrules == "N":
+    clearConsole()
+elif Showrules == "SHREK":
+    print("""   ⡴⠑⡄⠀⠀⠀⠀⠀⠀⠀ ⣀⣀⣤⣤⣤⣀⡀
+    ⠸⡇⠀⠿⡀⠀⠀⠀⣀⡴⢿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀
+    ⠀⠀⠀⠀⠑⢄⣠⠾⠁⣀⣄⡈⠙⣿⣿⣿⣿⣿⣿⣿⣿⣆
+    ⠀⠀⠀⠀⢀⡀⠁⠀⠀⠈⠙⠛⠂⠈⣿⣿⣿⣿⣿⠿⡿⢿⣆
+    ⠀⠀⠀⢀⡾⣁⣀⠀⠴⠂⠙⣗⡀⠀⢻⣿⣿⠭⢤⣴⣦⣤⣹⠀⠀⠀⢀⢴⣶⣆
+    ⠀⠀⢀⣾⣿⣿⣿⣷⣮⣽⣾⣿⣥⣴⣿⣿⡿⢂⠔⢚⡿⢿⣿⣦⣴⣾⠸⣼⡿
+    ⠀⢀⡞⠁⠙⠻⠿⠟⠉⠀⠛⢹⣿⣿⣿⣿⣿⣌⢤⣼⣿⣾⣿⡟⠉
+    ⠀⣾⣷⣶⠇⠀⠀⣤⣄⣀⡀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇
+    ⠀⠉⠈⠉⠀⠀⢦⡈⢻⣿⣿⣿⣶⣶⣶⣶⣤⣽⡹⣿⣿⣿⣿⡇
+    ⠀⠀⠀⠀⠀⠀⠀⠉⠲⣽⡻⢿⣿⣿⣿⣿⣿⣿⣷⣜⣿⣿⣿⡇
+    ⠀⠀ ⠀⠀⠀⠀⠀⢸⣿⣿⣷⣶⣮⣭⣽⣿⣿⣿⣿⣿⣿⣿⠇
+    ⠀⠀⠀⠀⠀⠀⣀⣀⣈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇
+    ⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+    dat is niet wat ik vroeg""")
+time.sleep(3)
+while True:
+    KaartenOver = len(MainPlayerDeck)
+    if KaartenOver == 0:
+        clearConsole()
+        print("Je hebt gewonnen!!!!")
+        break
+    else:
+        JouBeurt()
