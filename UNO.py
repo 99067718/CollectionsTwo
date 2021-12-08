@@ -29,6 +29,7 @@ third = "empty"
 
 #CardValues
 GrabCards = 0
+keuzeKaartKleur = ""
 
 #BoolValues
 placedInleaderboard = False
@@ -44,7 +45,7 @@ andere = {"neem-twee rood":41, "neem-twee geel": 42, "neem-twee blauw": 43, "nee
 #    print(values)
 
 #Speler kaarten#
-MainPlayerDeck = []
+MainPlayerDeck = ["KeuzeKaart"]
 player2Deck = []
 player3Deck = []
 player4Deck = []
@@ -95,6 +96,8 @@ namenLijst.remove(player9Naam)
 player10Naam = random.choice(namenLijst)
 namenLijst.remove(player10Naam)
 
+
+
 KaartenLijst = {
 "blauw" : 19, 
 "groene": 19,
@@ -123,16 +126,16 @@ aflegstapel = []
 kaart2 = ""
 kaart = random.choice(list(KaartenLijst))
 
-if kaart == "blauw"or kaart == "rode" or kaart == "groene" or kaart == "gele":
-    nummer = str(random.randint(0,9))
-    kaart2 = kaart + " " +nummer
-else:
-    kaart2 = kaart
-if kaart2 == "neem-twee rood" or kaart2 == "neem-twee geel" or "neem-twee blauw" or "neem-twee groen":
-    GrabCards += 2
-elif kaart2 == "neem 4":
-    GrabCards += 4
-aflegstapel.append(kaart2)
+while True:
+    kaart2 = ""
+    kaart = random.choice(list(KaartenLijst))
+    if kaart == "blauw"or kaart == "rode" or kaart == "groene" or kaart == "gele":
+        nummer = str(random.randint(0,9))
+        kaart2 = kaart + " " +nummer
+        aflegstapel.append(kaart2)
+        break
+    else:
+        kaart2 = kaart
 
 ###########################
 def VerdeelKaarten(naam):
@@ -399,6 +402,7 @@ while True:
                 print("Sorry maar dit spel heeft een maximum aantal spelers van 10.")
             repeated += 1
         else:
+            
             print("Als je een random username wil type dan \"random\" ")
             Username = input("Vul een gebruikersnaam in: ")
             if Username == "random" or Username == "Random":
@@ -410,6 +414,15 @@ while True:
         print("Leuk dat je dit met", aantal,"wil spelen, maar dat is geen nummer....")
         time.sleep(2)
         print("Probeer het opnieuw")
+
+PlayerList = [Username,player2Naam,player3Naam,player4Naam,player5Naam,player6Naam,player7Naam,player8Naam,player9Naam,player10Naam]
+while True:
+    length = len(PlayerList)
+    if length > aantal:
+        PlayerList.pop(-1)
+    else:
+        break
+    PlayerList.pop(0)
 
 clearConsole()
 print("Hallo",Username,"vandaag speel je UNO tegen")
@@ -437,8 +450,6 @@ input("Druk op Enter om de kaarten te verdelen.")
 def jeDeck():
     print("Jouw kaarten:",MainPlayerDeck)
 
-def PakKaarten():
-    print()
 
 
 for i in range(aantal):
@@ -494,8 +505,9 @@ def JouBeurt():
     repeats = 0
     global GrabCards
     gebruikNeem = ""
-    if aflegstapel[-1] == "neem-twee rood" or aflegstapel[-1] == "neem-twee geel" or aflegstapel[-1] == "neem-twee blauw" or aflegstapel[-1] == "neem-twee groen" or aflegstapel[-1] == "neem-4":
-        if "neem-twee rood" in MainPlayerDeck or "neem-twee geel" in MainPlayerDeck or "neem-twee blauw" in MainPlayerDeck or "neem-twee groen" in MainPlayerDeck or "neem-4" in MainPlayerDeck:
+    if aflegstapel[-1] == "neem-twee rood" and GrabCards > 0 or aflegstapel[-1] == "neem-twee geel" and GrabCards > 0 or aflegstapel[-1] == "neem-twee blauw" and GrabCards > 0 or aflegstapel[-1] == "neem-twee groen" and GrabCards > 0 or aflegstapel[-1] == "Neem-4" and GrabCards > 0:
+        
+        if "neem-twee rood" in MainPlayerDeck or "neem-twee geel" in MainPlayerDeck or "neem-twee blauw" in MainPlayerDeck or "neem-twee groen" in MainPlayerDeck or "Neem-4" in MainPlayerDeck:
             print(f"Gooi een 'neem-twee' of 'neem-vier' kaart op of pak {GrabCards} kaarten.")
             gebruikNeem = input(f"Ga je de kaart gebruiken of pak je {GrabCards} kaarten. 'G'(gebruik) 'H'(Houden)").upper()
             if gebruikNeem == "G":
@@ -515,9 +527,9 @@ def JouBeurt():
                     MainPlayerDeck.remove("neem-twee blauw")
                     aflegstapel.append("neem-twee blauw")
                     GrabCards += 2
-                elif "neem-4" in MainPlayerDeck:
-                    MainPlayerDeck.remove("neem 4")
-                    aflegstapel.append("neem 4")
+                elif "Neem-4" in MainPlayerDeck:
+                    MainPlayerDeck.remove("Neem 4")
+                    aflegstapel.append("Neem 4")
                     GrabCards += 4
                 else:
                     print("Huh ben jij een cheater?")
@@ -547,7 +559,7 @@ def JouBeurt():
                 print("wat bedoel je????")
                 time.sleep(1)
                 JouBeurt()
-                
+            
         else:
             print(f"De laatste kaart was een {aflegstapel[-1]}, U heeft geen kaart om het te ontkomen dus we zijn nu {GrabCards} kaarten aan uw deck aan het toevoegen.")
             time.sleep(5)
@@ -583,6 +595,7 @@ def JouBeurt():
         time.sleep(2)
     else:
         while True:
+            global keuzeKaartKleur
             clearConsole()
             print(f"De kaart die het laatste is afgelegd is {aflegstapel[-1]}.")
             aantalKaarten = len(MainPlayerDeck)
@@ -633,13 +646,52 @@ def JouBeurt():
                     if MainPlayerDeck[gekozenKaart -1] == "neem-twee rood" or MainPlayerDeck[gekozenKaart -1] == "neem-twee geel" or MainPlayerDeck[gekozenKaart -1] == "neem-twee groen" or MainPlayerDeck[gekozenKaart -1] == "neem-twee blauw":
                         GrabCards += 2
                         print(f"Als de volgende speler geen 'pak-twee/vier' kaarten heeft moet hij {GrabCards} kaarten pakken.")
+                        removeCard = MainPlayerDeck[gekozenKaart-1]
+                        aflegstapel.append(removeCard)
+                        MainPlayerDeck.pop(gekozenKaart - 1)
+                        break
                     elif MainPlayerDeck[gekozenKaart -1] == "Neem-4":
                         GrabCards += 4
                         print(f"Als de volgende speler geen 'pak-twee/vier' kaarten heeft moet hij {GrabCards} kaarten pakken.")
-                    removeCard = MainPlayerDeck[gekozenKaart-1]
-                    aflegstapel.append(removeCard)
-                    MainPlayerDeck.pop(gekozenKaart - 1)
-                    break
+                        removeCard = MainPlayerDeck[gekozenKaart-1]
+                        aflegstapel.append(removeCard)
+                        MainPlayerDeck.pop(gekozenKaart - 1)
+                        break
+                    elif MainPlayerDeck[gekozenKaart -1] == "KeuzeKaart":
+                        while True:
+                            print("Welke kleur wil je dat het spel mee door gaat?")
+                            kleur = input("Rood(R), Geel(Ge), Groen(Gr) of Blauw(B): ").upper()
+                            if kleur == "R":
+                                gekozenKleur = "rood"
+                                print("De gekozen kleur is nu Rood.")
+                            elif kleur == "GE":
+                                gekozenKleur = "geel"
+                                print("De gekozen kleur is nu geel.")
+                            elif kleur == "GR":
+                                gekozenKleur = "groen"
+                            elif kleur == "B":
+                                gekozenKleur = "blauw"
+                            else:
+                                gekozenKleur = kleur
+                            if gekozenKleur == kleur:
+                                clearConsole()
+                                print(f"{gekozenKleur} is geen mogelijke kleur probeer het opnieuw")
+                            else:
+                                print(f"De gekozen kleur is nu {gekozenKleur}, wil je door gaan?")
+                                proceed = input("Weet je zeker dat je deze kleur wil gebruiken?").upper()
+                                if proceed == "Y":
+                                    aflegstapel.append("KeuzeKaart")
+                                    keuzeKaartKleur = gekozenKleur
+                                    break
+                                else:
+                                    clearConsole()
+                                    print("Vul een nieuwe kleur in.")
+                        break
+                    else:
+                        removeCard = MainPlayerDeck[gekozenKaart-1]
+                        aflegstapel.append(removeCard)
+                        MainPlayerDeck.pop(gekozenKaart - 1)
+                        break
             except ValueError:
                 print("Vul het nummer die voor de kaart staat in.")
                 time.sleep(2)
