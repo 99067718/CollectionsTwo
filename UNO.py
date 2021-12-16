@@ -1,5 +1,5 @@
 from math import trunc
-from os import truncate, waitpid
+from os import getcwd, truncate, waitpid
 import os
 import time
 import sys
@@ -413,14 +413,17 @@ while True:
         time.sleep(2)
         print("Probeer het opnieuw")
 
+PlayerDecks = [MainPlayerDeck, player2Deck, player3Deck, player4Deck, player5Deck, player6Deck, player7Deck, player8Deck, player9Deck, player10Deck]
 PlayerList = [Username,player2Naam,player3Naam,player4Naam,player5Naam,player6Naam,player7Naam,player8Naam,player9Naam,player10Naam]
 while True:
     length = len(PlayerList)
     if length > aantal:
         PlayerList.pop(-1)
+        PlayerDecks.pop(-1)
     else:
         break
     PlayerList.pop(0)
+    PlayerDecks.pop(0)
 
 clearConsole()
 print("Hallo",Username,"vandaag speel je UNO tegen")
@@ -503,6 +506,7 @@ def JouBeurt():
     repeats = 0
     global GrabCards
     global keuzeKaartKleur
+    global skipPlayer
     gebruikNeem = ""
     if aflegstapel[-1] == "neem-twee rood" and GrabCards > 0 or aflegstapel[-1] == "neem-twee geel" and GrabCards > 0 or aflegstapel[-1] == "neem-twee blauw" and GrabCards > 0 or aflegstapel[-1] == "neem-twee groen" and GrabCards > 0 or aflegstapel[-1] == "Neem-4" and GrabCards > 0:
         
@@ -558,7 +562,12 @@ def JouBeurt():
                 print("wat bedoel je????")
                 time.sleep(1)
                 JouBeurt()
+        elif skipPlayer == True:
             
+            print("De laatste speler heeft een skip kaart neergelegd, U kan deze beurt niks doen.")
+            skipPlayer = False
+            time.sleep(2)
+
         else:
             print(f"De laatste kaart was een {aflegstapel[-1]}, U heeft geen kaart om het te ontkomen dus we zijn nu {GrabCards} kaarten aan uw deck aan het toevoegen.")
             time.sleep(5)
@@ -645,6 +654,7 @@ def JouBeurt():
                     print("hmm, je probeert het spel voor de gek te houden?")
                     time.sleep(2)
                 else:
+                    ChosenCardSplitted = MainPlayerDeck[gekozenKaart -1].split(" ")
                     if MainPlayerDeck[gekozenKaart -1] == "neem-twee rood" or MainPlayerDeck[gekozenKaart -1] == "neem-twee geel" or MainPlayerDeck[gekozenKaart -1] == "neem-twee groen" or MainPlayerDeck[gekozenKaart -1] == "neem-twee blauw":
                         GrabCards += 2
                         print(f"Als de volgende speler geen 'pak-twee/vier' kaarten heeft moet hij {GrabCards} kaarten pakken.")
@@ -692,12 +702,13 @@ def JouBeurt():
                         break
                     elif MainPlayerDeck[gekozenKaart-1] == "Uno_reverse rood" or MainPlayerDeck[gekozenKaart-1] == "Uno_reverse geel" or MainPlayerDeck[gekozenKaart-1] == "Uno_reverse groen" or MainPlayerDeck[gekozenKaart-1] == "Uno_reverse blauw":
                         PlayerList.reverse()
+                        PlayerDecks.reverse()
                         removeCard = MainPlayerDeck[gekozenKaart-1]
                         aflegstapel.append(removeCard)
                         MainPlayerDeck.pop(gekozenKaart - 1)
                         break
                     elif MainPlayerDeck[gekozenKaart-1] == "Skip rood" or MainPlayerDeck[gekozenKaart-1] == "Skip geel" or MainPlayerDeck[gekozenKaart-1] == "Skip groen" or MainPlayerDeck[gekozenKaart-1] == "Skip blauw":
-                        global skipPlayer
+                       
                         print("De volgende speler word deze ronde geskipt.")
                         time.sleep(2)
                         skipPlayer = True
@@ -720,7 +731,13 @@ def JouBeurt():
                             MainPlayerDeck.pop(gekozenKaart - 1)
                             break
                         else:
+                            time.sleep(3)
                             print("U kunt deze kaart niet inzetten, want de kleur klopt niet.")
+                    elif ChosenCardSplitted[0] == keuzeKaartKleur:
+                        removeCard = MainPlayerDeck[gekozenKaart-1]
+                        aflegstapel.append(removeCard)
+                        MainPlayerDeck.pop(gekozenKaart - 1)
+                        break
                     elif MainPlayerDeck[gekozenKaart-1] in greenList:
                         ###############################################                                 Groen
                         ChosenCardSplitted = MainPlayerDeck[gekozenKaart -1].split(" ")
@@ -736,6 +753,7 @@ def JouBeurt():
                             MainPlayerDeck.pop(gekozenKaart - 1)
                             break
                         else:
+                            time.sleep(3)
                             print("U kunt deze kaart niet inzetten, want de kleur klopt niet.")
                     elif MainPlayerDeck[gekozenKaart-1] in yellowList:
                         ###############################################                                 Geel
@@ -752,6 +770,7 @@ def JouBeurt():
                             MainPlayerDeck.pop(gekozenKaart - 1)
                             break
                         else:
+                            time.sleep(3)
                             print("U kunt deze kaart niet inzetten, want de kleur klopt niet.")
                     elif MainPlayerDeck[gekozenKaart-1] in blueList:
                         ###############################################                                 Blauw
@@ -768,6 +787,7 @@ def JouBeurt():
                             MainPlayerDeck.pop(gekozenKaart - 1)
                             break
                         else:
+                            time.sleep(3)
                             print("U kunt deze kaart niet inzetten, want de kleur klopt niet.")
                             
                     else:
@@ -781,18 +801,134 @@ def JouBeurt():
             print(MainPlayerDeck)
 
 
-def AIBeurt(botNaam):
+def AIBeurt(botNaam, theDeck):
     global skipPlayer
     clearConsole()
-    if skipPlayer == True:
-        print(f"{botNaam} is deze ronde niet aan de beurt.")
-        time.sleep(2)
-        skipPlayer = False
+    amountOfCards = len(theDeck)
+    if len == 0:
+        print(f"{botNaam} heeft geen kaarten meer.")
+        PlayerList.remove(botNaam)
     else:
-        print(botNaam, "is aan de beurt.")
-        laatsteKaart = aflegstapel[-1]
-        ThinkingTime = random.randint(0,6)
-        time.sleep(ThinkingTime)
+        if skipPlayer == True:
+            print(f"{botNaam} is deze ronde niet aan de beurt vanwege een skip-kaart.")
+            time.sleep(2)
+            skipPlayer = False
+        else:
+            try:
+                global GrabCards
+                global keuzeKaartKleur
+                repeats = 0
+                print(botNaam, "is aan de beurt.")
+                laatsteKaart = aflegstapel[-1]
+                splittedLastCard = aflegstapel[-1].split(" ")
+                ThinkingTime = random.randint(0,6)
+                time.sleep(ThinkingTime)
+                GetCard = 0
+                if aflegstapel[-1] == "neem-twee rood" and GrabCards > 0 or aflegstapel[-1] == "neem-twee blauw" and GrabCards > 0 or aflegstapel[-1] == "neem-twee geel" and GrabCards > 0 or aflegstapel[-1] == "neem-twee groen" and GrabCards > 0 or aflegstapel [-1] == "Neem-4" and GrabCards > 0:
+                    while True:
+                        repeats += 1
+                        kaart = random.choice(list(KaartenLijst))
+
+                        #Checkt of de kaart een normale kaart is#
+                        if kaart == "blauw"or kaart == "rode" or kaart == "groene" or kaart == "gele":
+                            nummer = str(random.randint(0,9))
+                            kaart2 = kaart + " " +nummer
+                        else:
+                            kaart2 = kaart
+
+                        if KaartenLijst[kaart] > 0:
+                            KaartenLijst[kaart] -= 1
+                            theDeck.append(kaart2)
+                        else:
+                            repeats -= 1
+                        if repeats == GrabCards:
+                            print(f"{botNaam} heeft {GrabCards} kaarten gepakt.")
+                            GrabCards = 0
+                            break
+                
+                while True:
+                    randomCard = theDeck[GetCard]
+                    GetCard += 1
+                    mainSplittedCard = randomCard.split(" ")
+                    if aflegstapel[-1] == "neem-twee rood" or aflegstapel[-1] == "neem-twee blauw" or aflegstapel[-1] == "neem-twee geel" or aflegstapel[-1] == "neem-twee groen":
+                        GrabCards += 2
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        break
+                    elif aflegstapel[-1] == "Neem-4":
+                        GrabCards += 4
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        break
+                    if randomCard in redList:
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        if randomCard == "neem-twee rood":
+                            GrabCards += 2
+                        elif randomCard == "Uno_reverse rood":
+                            PlayerList.reverse()
+                            PlayerDecks.reverse()
+                        break
+                    elif randomCard in yellowList:
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        if randomCard == "neem-twee geel":
+                            GrabCards += 2
+                        elif randomCard == "Uno_reverse geel":
+                            PlayerList.reverse()
+                            PlayerDecks.reverse()
+                        break
+                    elif randomCard in blueList:
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        if randomCard == "neem-twee blauw":
+                            GrabCards += 2
+                        elif randomCard == "Uno_reverse blauw":
+                            PlayerList.reverse()
+                            PlayerDecks.reverse()
+                        break
+                    elif randomCard in greenList:
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        if randomCard == "neem-twee groen":
+                            GrabCards += 2
+                        elif randomCard == "Uno_reverse groen":
+                            PlayerList.reverse()
+                            PlayerDecks.reverse()
+                        break
+                    elif randomCard == "KeuzeKaart":
+                        print(f"{botNaam} heeft een keuzekaart ingezet.")
+                        kleurenList = ["rode", "gele", "groene", "blauw"]
+                        gekozen = random.choice(kleurenList)
+                        keuzeKaartKleur = gekozen
+                    elif mainSplittedCard == splittedLastCard:
+                        theDeck.remove(randomCard)
+                        aflegstapel.append(randomCard)
+                        break
+                    
+            except IndexError:
+                print(f"Speler {botNaam}, heeft een kaart gepakt.")
+                time.sleep(1)
+                repeats = 0
+                while True:
+                    repeats += 1
+                    kaart = random.choice(list(KaartenLijst))
+
+                    #Checkt of de kaart een normale kaart is#
+                    if kaart == "blauw"or kaart == "rode" or kaart == "groene" or kaart == "gele":
+                        nummer = str(random.randint(0,9))
+                        kaart2 = kaart + " " +nummer
+                    else:
+                        kaart2 = kaart
+
+                    if KaartenLijst[kaart] > 0:
+                        KaartenLijst[kaart] -= 1
+                        theDeck.append(kaart2)
+                    else:
+                        repeats -= 1
+                    if repeats == 1:
+                        break
+
 
 
 Showrules = input("Wil je de spelregels lezen? (Y/N): ").upper()
@@ -874,4 +1010,4 @@ while True:
     else:
         JouBeurt()
     for i in range(aantal-1):
-        AIBeurt(PlayerList[i])
+        AIBeurt(PlayerList[i], PlayerDecks[i])
